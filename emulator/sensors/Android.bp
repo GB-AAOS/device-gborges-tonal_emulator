@@ -39,5 +39,12 @@ cc_binary {
         "libandroid",
         "liblog",
     ],
+    header_libs: [
+        "libandroid_headers"
+    ],
+    // Sometimes vendor binaries need to explicitly look at these for ASensorManager
+    static_libs: [
+        "libarect", 
+    ],
     cflags: ["-Wall", "-Werror"],
 }
