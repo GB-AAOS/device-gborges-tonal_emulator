@@ -27,24 +27,3 @@ cc_library_shared {
         "-DLOG_TAG=\"android.hardware.sensors@2.1-impl.gborges\""
     ],
 }
-
-cc_binary {
-    name: "ProximityCli",
-    srcs: ["tools/proximity_cli/ProximityCli.cpp"],
-    vendor: true,
-    shared_libs: [
-        "libsensor",
-        "libutils",
-        "libbase",
-        "libandroid",
-        "liblog",
-    ],
-    header_libs: [
-        "libandroid_headers"
-    ],
-    // Sometimes vendor binaries need to explicitly look at these for ASensorManager
-    static_libs: [
-        "libarect", 
-    ],
-    cflags: ["-Wall", "-Werror"],
-}
