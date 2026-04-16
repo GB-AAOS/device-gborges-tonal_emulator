@@ -2,6 +2,7 @@
 #include <cmath>
 #include <chrono>
 #include <utils/SystemClock.h>
+#include <android-base/properties.h>
 
 const float kSensorFrequencyHz = 0.1f; // 0.1Hz
 const float kPi = 3.14159265358979323846f;
