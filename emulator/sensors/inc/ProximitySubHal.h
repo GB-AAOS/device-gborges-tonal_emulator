@@ -33,4 +33,8 @@ public:
     Return<Result> injectSensorData_2_1(const Event& event) override;
     Return<void> debug(const hidl_handle& fd, const hidl_vec<hidl_string>& args) override;
     const std::string getName() override { return "ProximityPlusPlus-SubHAL"; }
+
+private:
+    SensorInfo mSensorInfo;
+    static constexpr int32_t kSensorHandle = 1;
 };
