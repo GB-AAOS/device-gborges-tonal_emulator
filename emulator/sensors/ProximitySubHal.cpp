@@ -1,5 +1,7 @@
 #include "ProximitySubHal.h"
 #include <cmath>
+#include <chrono>
+#include <utils/SystemClock.h>
 
 ProximitySubHal::ProximitySubHal() {
     mSensorInfo.sensorHandle = kSensorHandle;

@@ -2,6 +2,7 @@
 
 #include <V2_1/SubHal.h>
 #include <hidl/Status.h>
+#include <thread>
 
 namespace sensors = android::hardware::sensors;
 using sensors::V1_0::Result;
