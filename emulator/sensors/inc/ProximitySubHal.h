@@ -35,13 +35,14 @@ public:
     const std::string getName() override { return "ProximityPlusPlus-SubHAL"; }
 
 private:
-    void sensorThreadLoop();
+void sensorThreadLoop();
 
     sp<IHalProxyCallback> mCallback;
+    SensorInfo mSensorInfo;
+    
     std::atomic<bool> mEnabled;
     std::atomic<bool> mStopThread;
     std::thread mThread;
-
-    SensorInfo mSensorInfo;
+    
     static constexpr int32_t kSensorHandle = 1;
 };

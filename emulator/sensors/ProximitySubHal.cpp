@@ -17,6 +17,16 @@ ProximitySubHal::ProximitySubHal() {
     mSensorInfo.flags = (uint32_t)sensors::V1_0::SensorFlagBits::CONTINUOUS_MODE;
 }
 
+ProximitySubHal::~ProximitySubHal() {
+    // Stop thread
+    mStopThread = true;
+    
+    // Wait for the thread to finish execution
+    if (mThread.joinable()) {
+        mThread.join();
+    }
+}
+
 Return<void> ProximitySubHal::getSensorsList_2_1(getSensorsList_2_1_cb callback) {
     std::vector<SensorInfo> sensors;
     sensors.push_back(mSensorInfo);
@@ -45,11 +55,28 @@ Return<Result> ProximitySubHal::injectSensorData_2_1(const Event&) { return Resu
 Return<void> ProximitySubHal::debug(const hidl_handle&, const hidl_vec<hidl_string>&) { return Void(); }
 
 void ProximitySubHal::sensorThreadLoop() {
+    float mockValue = 0.0f;
+
     while (!mStopThread) {
         if (mEnabled) {
-            // TODO: Add sensor logic
+            mockValue = (mockValue == 0.0f) ? 1.0f : 0.0f;
+
+            // Prepare the HIDL Event
+            Event event;
+            event.timestamp = android::elapsedRealtimeNano();
+            event.sensorHandle = kSensorHandle;
+            event.sensorType = sensors::V2_1::SensorType::PROXIMITY;
+            event.u.scalar = mockValue;
+
+            std::vector<Event> events;
+            events.push_back(event);
+
+            // Post events to the Multi-HAL Proxy
+            if (mCallback != nullptr) {
+                mCallback->postEvents(events, mCallback->createScopedWakelock(false));
+            }
         }
         
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
