@@ -58,34 +58,45 @@ void ProximitySubHal::sensorThreadLoop() {
     auto loopStartTime = std::chrono::steady_clock::now();
     
     // Calculate the interval based on the frequency
-    const auto interval = std::chrono::microseconds(static_cast<long long>(1000000.0f / kSensorFrequencyHz));
+    const auto interval = std::chrono::microseconds(
+        static_cast<long long>(1000000.0f / kSensorFrequencyHz)
+    );
 
     while (!mStopThread) {
         if (mEnabled) {
             auto now = std::chrono::steady_clock::now();
-            float elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<float>>(now - loopStartTime).count();
+            float elapsedSeconds = std::chrono::duration_cast<std::chrono::duration<float>>(
+                now - loopStartTime
+            ).count();
+
+            // Check for manual override via system property
+            // Any value outside of [0, 1] indicates "no override active"
+            std::string propVal = android::base::GetProperty("my.proximity.override", "-1.0");
+            float overrideVal = std::strtof(propVal.c_str(), nullptr);
+            
+            float finalValue;
+            if (overrideVal >= 0.0f && overrideVal <= 1.0f) {
+                finalValue = overrideVal;
+            } else {
+                finalValue = 0.5f + 0.5f * sin(2.0f * kPi * kSensorFrequencyHz * elapsedSeconds);
+            }
 
             // Prepare HIDL Event
-            Event event;
-            event.timestamp = android::elapsedRealtimeNano(); 
+            android::hardware::sensors::V2_1::Event event;
+            event.timestamp = android::elapsedRealtimeNano();
             event.sensorHandle = kSensorHandle;
-            event.sensorType = sensors::V2_1::SensorType::PROXIMITY;
-
-            event.u.scalar = 0.5f + 0.5f * sin(2.0f * kPi * kSensorFrequencyHz * elapsedSeconds);
-
-            std::vector<Event> events;
-            events.push_back(event);
+            event.sensorType = android::hardware::sensors::V2_1::SensorType::PROXIMITY;
+            event.u.scalar = finalValue;
 
             if (mCallback != nullptr) {
+                std::vector<android::hardware::sensors::V2_1::Event> events = { event };
                 mCallback->postEvents(events, mCallback->createScopedWakelock(false));
             }
         }
         
-        // Sleep for the defined frequency interval
         std::this_thread::sleep_for(interval);
     }
 }
-
 // ========================================================
 //                Unused methods (stubs)
 // ========================================================
