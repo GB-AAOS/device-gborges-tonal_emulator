@@ -4,11 +4,11 @@ This repository provides the `tonal_emulator` device configuration for AOSP. It 
 
 ## Project Overview
 
-The `tonal_emulator` is designed to demonstrate full-stack Android integration. It features:
-* **Fake Proximity Sensor**: A C++ Sensor Sub-HAL implementation that generates sinusoidal values. Uses sensor multihal 2.1.
-* **Proximity Monitor App**: A pre-installed system application that tracks and logs sensor data.
-* **Property Override**: A mechanism to manually control sensor output via system properties.
-* **SEPolicy**: Treble-compliant security policies ensuring proper communication between the framework and the vendor HAL.
+The `tonal_emulator` demonstrates a complete AOSP stack integration. It features:
+* **Fake Proximity Sensor**: A C++ Sensor Sub-HAL implementation that generates sinusoidal values. Built using the Sensors Multi-HAL 2.1 framework.
+* **Proximity Monitor App**: A pre-installed system application that displays and logs sensor data in real-time.
+* **Property Override**: A developer hook to manually control sensor output via system properties.
+* **SEPolicy**: Treble-compliant security policies ensuring secure communication between the system framework and the vendor HAL.
 
 ## Setup and Build Instructions
 
@@ -40,8 +40,8 @@ lunch tonal_emulator-trunk_staging-userdebug
 m
 ~~~
 
-### 4. Run the emulator
-Run the tonal emulator:
+### 4. Run the Emulator
+Launch the tonal emulator:
 
 ~~~bash
 emulator
@@ -50,15 +50,15 @@ emulator
 ## Features and Verification
 
 ### Fake Proximity Sensor
-The sensor is integrated via the Sensors Multi-HAL. It produces a sinusoidal wave (0.5 + 0.5 * sin(t)) every 500ms, at a frequency of 0.1Hz.
+The sensor is integrated via the Sensors Multi-HAL. It produces a sinusoidal wave (0.5 + 0.5 * sin(t)) every 500ms, running at a frequency of 0.1Hz.
 
-To verify the sensor is running:
+To verify the sensor registration:
 ~~~bash
 adb shell dumpsys sensorservice | grep -A 10 "Proximity Fake Sensor"
 ~~~
 
 ### Property Override
-You can bypass the sinusoidal logic and force a specific sensor value using a system property. This is useful for testing specific application states.
+You can bypass the sinusoidal logic and force a specific sensor value via shell. This is useful for testing edge cases in the framework or apps.
 
 ~~~bash
 # Force the sensor to output 0.7
@@ -69,7 +69,7 @@ adb shell setprop vendor.proximity.override -1.0
 ~~~
 
 ### Proximity Monitor App
-The built-in monitoring application shows the current value from the sensor and the latency in milliseconds, it also logs the current value to `logcat` every second.
+The integrated monitoring application displays the current sensor value and calculates the HAL-to-App latency in milliseconds. It also throttles telemetry to `logcat` once every second.
 
 ~~~bash
 adb logcat -s ProximityMonitorApp
@@ -78,4 +78,9 @@ adb logcat -s ProximityMonitorApp
 ## Architecture and Security
 
 ### SELinux Implementation
-The device includes custom SEPolicy rules to allow the `system_server` to communicate with the vendor sensor HAL. It also defines the `vendor_proximity_prop` type, allowing the HAL to read the override property.
+The device includes custom SEPolicy rules to allow the `system_server` to connect to the vendor sensor HAL. It defines the `vendor_proximity_prop` type, allowing the HAL to read the override property while strictly adhering to Treble partition boundaries and VTS namespace requirements.
+
+## Documentation & Resources
+
+* **Design Document**: Detailed architectural decisions and SELinux debugging steps can be found in [docs/design_document.md](docs/design_document.md).
+* **Demo Video**: [View the working build and property override demo](https://drive.google.com/file/d/1vFgJzZ5D2TgMu3AuKxU12QQ6zRDGFWW-/view?usp=sharing).
