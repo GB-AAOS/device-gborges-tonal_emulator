@@ -1,8 +1,10 @@
-cc_library_shared {
-    name: "android.hardware.sensors@2.1-impl.gborges",
+cc_library {
+    name: "android.hardware.sensors@2.1-subhal.gborges",
     vendor: true,
     relative_install_path: "hw",
     local_include_dirs: ["inc"],
+
+    defaults: ["hidl_defaults"],
 
     srcs: [
         "main.cpp",
