@@ -5,7 +5,7 @@ This repository provides the `tonal_emulator` device configuration for AOSP. It 
 ## Project Overview
 
 The `tonal_emulator` is designed to demonstrate full-stack Android integration. It features:
-* **Fake Proximity Sensor**: A C++ Sub-HAL implementation that generates sinusoidal values.
+* **Fake Proximity Sensor**: A C++ Sensor Sub-HAL implementation that generates sinusoidal values. Uses sensor multihal 2.1.
 * **Proximity Monitor App**: A pre-installed system application that tracks and logs sensor data.
 * **Property Override**: A mechanism to manually control sensor output via system properties.
 * **SEPolicy**: Treble-compliant security policies ensuring proper communication between the framework and the vendor HAL.
