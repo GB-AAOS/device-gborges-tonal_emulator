@@ -1,0 +1,11 @@
+# 1. Define the type with the required 'vendor_' prefix for the context
+# Use 'vendor_property_type' to satisfy the vendor partition rules
+type vendor_proximity_prop, property_type, vendor_property_type;
+
+# 2. Allow the Sensor HAL to read it
+get_prop(hal_sensors_default, vendor_proximity_prop)
+
+# 3. Allow shell (adb) to set it for the challenge
+# If this causes a NEVERALLOW, it's because the system (shell) 
+# is trying to write to a vendor property.
+

@@ -68,7 +68,7 @@ void ProximitySubHal::sensorThreadLoop() {
             ).count();
 
             // Override logic
-            std::string propVal = android::base::GetProperty("my.proximity.override", "-1.0");
+            std::string propVal = android::base::GetProperty("vendor.proximity.override", "-1.0");
             float overrideVal = std::strtof(propVal.c_str(), nullptr);
             
             float finalValue;

@@ -12,6 +12,7 @@ PRODUCT_BRAND := Android
 PRODUCT_MODEL := Android SDK x86_64 emulator for Tonal Challenge
 
 DEVICE_MANIFEST_FILE := device/generic/goldfish/manifest.xml
+BOARD_VENDOR_SEPOLICY_DIRS += device/gborges/emulator/sepolicy
 
 # Tonal Challenge properties
 PRODUCT_PACKAGES += \
